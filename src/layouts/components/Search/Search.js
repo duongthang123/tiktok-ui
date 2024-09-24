@@ -2,7 +2,7 @@ import { faCircleXmark, faSpinner, faMagnifyingGlass } from '@fortawesome/free-s
 import HeadlessTippy from '@tippyjs/react/headless';
 import classNames from 'classnames/bind';
 
-import * as searchServices from '~/apiServices/searchServices';
+import * as searchServices from '~/services/searchService';
 import { Wrapper as PopperWrapper } from '~/componets/Popper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AccountItem from '~/componets/AccountItem';
@@ -15,28 +15,28 @@ const cx = classNames.bind(styles);
 function Search() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResult, setSearchResult] = useState([]);
-    const [showResult, setShowResult] = useState(true);
+    const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const debounced = useDebounce(searchValue, 500);
+    const debouncedValue = useDebounce(searchValue, 500);
     const inputRef = useRef();
 
     useEffect(() => {
-        if (!debounced.trim()) {
+        if (!debouncedValue.trim()) {
             setSearchResult([]);
             return;
         }
         const fetchApi = async () => {
             setLoading(true);
 
-            const result = await searchServices.search(debounced);
+            const result = await searchServices.search(debouncedValue);
             setSearchResult(result);
 
             setLoading(false);
         };
 
         fetchApi();
-    }, [debounced]);
+    }, [debouncedValue]);
 
     const handleClear = () => {
         setSearchValue('');
@@ -51,6 +51,7 @@ function Search() {
     return (
         <HeadlessTippy
             interactive
+            appendTo={() => document.body}
             visible={showResult && searchResult.length > 0}
             render={(attrs) => (
                 <div className={cx('search-result')} tabIndex={-1} {...attrs}>
@@ -89,7 +90,7 @@ function Search() {
                     </button>
                 )}
 
-                <button className={cx('search-btn')}>
+                <button className={cx('search-btn')} onMouseDown={(e) => e.preventDefault()}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                 </button>
             </div>

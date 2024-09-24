@@ -12,7 +12,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
+import { Link } from 'react-router-dom';
 
+import config from '~/config';
 import styles from './Header.module.scss';
 import images from '~/assets/images';
 import Button from '~/componets/Button';
@@ -55,7 +57,7 @@ const MENU_ITEMS = [
 ];
 
 function Header() {
-    const currentUser = true;
+    const currentUser = false;
 
     // hanlde logic
     const hanldeMenuChange = (menuItem) => {
@@ -94,7 +96,9 @@ function Header() {
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
-                <img src={images.logo.default} alt="Tiktok" />
+                <Link to={config.routes.home} className={cx('logo-link')}>
+                    <img src={images.logo.default} alt="Tiktok" />
+                </Link>
 
                 <Search />
 
